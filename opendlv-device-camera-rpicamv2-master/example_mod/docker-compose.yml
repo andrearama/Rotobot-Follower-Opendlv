@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+    device-camera-rpicamv2:
+        image: chalmersrevere/opendlv-device-camera-rpicamv2-armhf:v0.0.1
+        network_mode: "host"
+        volumes:
+          - "/dev/shm:/dev/shm"
+        privileged: true
+        ulimits:
+          memlock:
+            soft: 4000000
+            hard: 4000000
+        command: "/usr/bin/opendlv-device-camera-rpicamv2 --cid=111"
+    
+    device-camera-rpicamv2-example:
+        image: chalmersrevere/opendlv-device-camera-rpicamv2-example-armhf:v0.0.1
+        depends_on:
+          - device-camera-rpicamv2
+        restart: always
+        network_mode: "host"
+        working_dir: /opt/
+        volumes:
+          - "/dev/shm:/dev/shm"
+          - .:/opt/
+        privileged: true
+        ulimits:
+          memlock:
+            soft: 4000000
+            hard: 4000000
+        command: "/usr/bin/example --cid=111 --name=cam0 --traincnn=1 --width=1280 --height=960 --bpp=24 --verbose=0"
